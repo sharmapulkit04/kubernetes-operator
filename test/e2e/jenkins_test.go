@@ -80,11 +80,11 @@ func createJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 									Scheme: corev1.URISchemeHTTP,
 								},
 							},
-							InitialDelaySeconds: int32(80),
-							TimeoutSeconds:      int32(4),
+							InitialDelaySeconds: int32(100),
+							TimeoutSeconds:      int32(5),
 							FailureThreshold:    int32(10),
 							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(1),
+							PeriodSeconds:       int32(10),
 						},
 						LivenessProbe: &corev1.Probe{
 							Handler: corev1.Handler{
@@ -94,11 +94,11 @@ func createJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 									Scheme: corev1.URISchemeHTTP,
 								},
 							},
-							InitialDelaySeconds: int32(80),
-							TimeoutSeconds:      int32(4),
+							InitialDelaySeconds: int32(100),
+							TimeoutSeconds:      int32(5),
 							FailureThreshold:    int32(10),
 							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(1),
+							PeriodSeconds:       int32(10),
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
@@ -224,12 +224,12 @@ func verifyJenkinsAPIConnection(jenkins *v1alpha2.Jenkins, namespace string) (je
 	return jenkinsClient, cleanUpFunc
 }
 
-/*func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
-	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod")
+func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
+	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
 	Expect(k8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
-	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted")
-}*/
+	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted\n")
+}
 
 func getJenkinsService(jenkins *v1alpha2.Jenkins, serviceKind string) *corev1.Service {
 	service := &corev1.Service{}

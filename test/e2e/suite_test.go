@@ -118,7 +118,7 @@ var _ = BeforeSuite(func(done Done) {
 	k8sClient = k8sManager.GetClient()
 	Expect(k8sClient).NotTo(BeNil())
 	close(done)
-}, 60)
+}, 2000)
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")
