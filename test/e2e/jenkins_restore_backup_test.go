@@ -33,7 +33,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 	})
 
 	Context("when deploying CR with backup enabled to cluster", func() {
-		It("performs backups before pod deletion and restores them", func() {
+		It("performs backups before pod deletion and restores them even Jenkins status is restarted", func() {
 			waitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()

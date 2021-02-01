@@ -307,7 +307,7 @@ func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("waiting for the job to finish")
 	time.Sleep(100 * time.Second) // wait for the build to complete
 }
-func verifyJobIsWorkingCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID string) {
+func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("retrieving finished job")
 	job, err := jenkinsClient.GetJob(jobID)
 	Expect(err).To(BeNil())

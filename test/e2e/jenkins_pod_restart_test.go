@@ -42,8 +42,8 @@ var _ = Describe("Jenkins controller", func() {
 		destroyNamespace(namespace)
 	})
 
-	Context("when restarting pod", func() {
-		It("is able to execute Jenkins Master pod restart", func() {
+	Context("when restarting Jenkins master pod", func() {
+		It("new Jenkins Master pod should be created", func() {
 			waitForJenkinsBaseConfigurationToComplete(jenkins)
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
@@ -90,8 +90,8 @@ var _ = Describe("Jenkins controller", func() {
 		destroyNamespace(namespace)
 	})
 
-	Context("when restarting pod", func() {
-		It("is able to execute a safe restart", func() {
+	Context("when running Jenkins safe restart", func() {
+		It("authorization strategy is not overwritten", func() {
 			waitForJenkinsBaseConfigurationToComplete(jenkins)
 			waitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)

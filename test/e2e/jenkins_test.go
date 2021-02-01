@@ -80,11 +80,11 @@ func createJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 									Scheme: corev1.URISchemeHTTP,
 								},
 							},
-							InitialDelaySeconds: int32(100),
-							TimeoutSeconds:      int32(5),
+							InitialDelaySeconds: int32(80),
+							TimeoutSeconds:      int32(4),
 							FailureThreshold:    int32(10),
 							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(10),
+							PeriodSeconds:       int32(1),
 						},
 						LivenessProbe: &corev1.Probe{
 							Handler: corev1.Handler{
@@ -94,11 +94,11 @@ func createJenkinsCR(name, namespace string, seedJob *[]v1alpha2.SeedJob, groovy
 									Scheme: corev1.URISchemeHTTP,
 								},
 							},
-							InitialDelaySeconds: int32(100),
-							TimeoutSeconds:      int32(5),
+							InitialDelaySeconds: int32(80),
+							TimeoutSeconds:      int32(4),
 							FailureThreshold:    int32(10),
 							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(10),
+							PeriodSeconds:       int32(1),
 						},
 						VolumeMounts: []corev1.VolumeMount{
 							{

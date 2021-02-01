@@ -85,6 +85,7 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 
 	Eventually(func() (bool, error) {
 		status, err := jenkinsClient.Poll()
+		_, _ = fmt.Fprintf(GinkgoWriter, "Safe restart status: %+v, err: %s\n", status, err)
 		if err != nil {
 			return false, err
 		}
@@ -92,5 +93,5 @@ func waitForJenkinsSafeRestart(jenkinsClient jenkinsclient.Jenkins) {
 			return false, err
 		}
 		return true, nil
-	}, time.Second*300, time.Second).Should(BeTrue())
+	}, time.Second*200, time.Second).Should(BeTrue())
 }

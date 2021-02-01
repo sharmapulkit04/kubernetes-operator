@@ -15,7 +15,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 const pvcName = "pvc-jenkins"
@@ -109,34 +108,6 @@ func createJenkinsWithBackupAndRestoreConfigured(name, namespace string) *v1alph
 				Containers: []v1alpha2.Container{
 					{
 						Name: resources.JenkinsMasterContainerName,
-						ReadinessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
-								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
-									Port:   intstr.FromString("http"),
-									Scheme: corev1.URISchemeHTTP,
-								},
-							},
-							InitialDelaySeconds: int32(80),
-							TimeoutSeconds:      int32(4),
-							FailureThreshold:    int32(10),
-							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(1),
-						},
-						LivenessProbe: &corev1.Probe{
-							Handler: corev1.Handler{
-								HTTPGet: &corev1.HTTPGetAction{
-									Path:   "/login",
-									Port:   intstr.FromString("http"),
-									Scheme: corev1.URISchemeHTTP,
-								},
-							},
-							InitialDelaySeconds: int32(80),
-							TimeoutSeconds:      int32(4),
-							FailureThreshold:    int32(10),
-							SuccessThreshold:    int32(1),
-							PeriodSeconds:       int32(1),
-						},
 						VolumeMounts: []corev1.VolumeMount{
 							{
 								Name:      "plugins-cache",

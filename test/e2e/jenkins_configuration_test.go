@@ -184,13 +184,13 @@ var _ = Describe("Jenkins controller plugins test", func() {
 	})
 
 	Context("when deploying CR with a SeedJob to cluster", func() {
-		It("should create a jenkins job successfully", func() {
+		It("runs kubernetes plugin job successfully", func() {
 			waitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient, cleanUpFunc := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc()
 			waitForJobCreation(jenkinsClient, jobID)
 			verifyJobCanBeRun(jenkinsClient, jobID)
-			verifyJobIsWorkingCorrectly(jenkinsClient, jobID)
+			verifyJobHasBeenRunCorrectly(jenkinsClient, jobID)
 		})
 	})
 })
