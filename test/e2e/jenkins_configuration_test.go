@@ -7,6 +7,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -70,6 +71,20 @@ var _ = Describe("Jenkins controller configuration", func() {
 			systemMessageEnvName:     systemMessage,
 			numberOfExecutorsEnvName: fmt.Sprintf("%d", numberOfExecutors),
 		}
+		LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				HTTPGet: &corev1.HTTPGetAction{
+					Path:   "/login",
+					Port:   intstr.FromString("http"),
+					Scheme: corev1.URISchemeHTTP,
+				},
+			},
+			InitialDelaySeconds: int32(80),
+			TimeoutSeconds:      int32(4),
+			FailureThreshold:    int32(10),
+			SuccessThreshold:    int32(1),
+			PeriodSeconds:       int32(1),
+		}
 	)
 
 	BeforeEach(func() {
@@ -77,7 +92,7 @@ var _ = Describe("Jenkins controller configuration", func() {
 
 		createUserConfigurationSecret(namespace.Name, userConfigurationSecretData)
 		createUserConfigurationConfigMap(namespace.Name, numberOfExecutorsEnvName, fmt.Sprintf("${%s}", systemMessageEnvName))
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, LivenessProbe, priorityClassName)
 		createDefaultLimitsForContainersInNamespace(namespace.Name)
 		createKubernetesCredentialsProviderSecret(namespace.Name, mySeedJob)
 	})
@@ -121,11 +136,25 @@ var _ = Describe("Jenkins controller priority class", func() {
 				Configurations: []v1alpha2.ConfigMapRef{},
 			},
 		}
+		LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				HTTPGet: &corev1.HTTPGetAction{
+					Path:   "/login",
+					Port:   intstr.FromString("http"),
+					Scheme: corev1.URISchemeHTTP,
+				},
+			},
+			InitialDelaySeconds: int32(100),
+			TimeoutSeconds:      int32(4),
+			FailureThreshold:    int32(10),
+			SuccessThreshold:    int32(1),
+			PeriodSeconds:       int32(1),
+		}
 	)
 
 	BeforeEach(func() {
 		namespace = createNamespace()
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
+		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, LivenessProbe, priorityClassName)
 	})
 
 	AfterEach(func() {
@@ -172,11 +201,25 @@ var _ = Describe("Jenkins controller plugins test", func() {
 				Configurations: []v1alpha2.ConfigMapRef{},
 			},
 		}
+		LivenessProbe = &corev1.Probe{
+			Handler: corev1.Handler{
+				HTTPGet: &corev1.HTTPGetAction{
+					Path:   "/login",
+					Port:   intstr.FromString("http"),
+					Scheme: corev1.URISchemeHTTP,
+				},
+			},
+			InitialDelaySeconds: int32(80),
+			TimeoutSeconds:      int32(4),
+			FailureThreshold:    int32(10),
+			SuccessThreshold:    int32(1),
+			PeriodSeconds:       int32(1),
+		}
 	)
 
 	BeforeEach(func() {
 		namespace = createNamespace()
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, priorityClassName)
+		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, &[]v1alpha2.SeedJob{mySeedJob.SeedJob}, groovyScripts, casc, LivenessProbe, priorityClassName)
 	})
 
 	AfterEach(func() {

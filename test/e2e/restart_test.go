@@ -2,7 +2,6 @@ package e2e
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
@@ -54,6 +53,15 @@ func checkIfAuthorizationStrategyUnsecuredIsSet(jenkinsClient jenkinsclient.Jenk
 
 func checkBaseConfigurationCompleteTimeIsNotSet(jenkins *v1alpha2.Jenkins) {
 	By("checking that Base Configuration's complete time is not set")
+	/*
+		jenkinsStatus := &v1alpha2.Jenkins{}
+		namespaceName := types.NamespacedName{Namespace: jenkins.Namespace, Name: jenkins.Name}
+		err := k8sClient.Get(context.TODO(), namespaceName, jenkinsStatus)
+		Expect(err).NotTo(HaveOccurred())
+		if jenkinsStatus.Status.BaseConfigurationCompletedTime != nil {
+			Fail(fmt.Sprintf("Status.BaseConfigurationCompletedTime is set after pod restart, status %+v", jenkinsStatus.Status))
+		}
+	*/
 
 	Eventually(func() (bool, error) {
 		actualJenkins := &v1alpha2.Jenkins{}
@@ -63,5 +71,5 @@ func checkBaseConfigurationCompleteTimeIsNotSet(jenkins *v1alpha2.Jenkins) {
 		}
 		return actualJenkins.Status.BaseConfigurationCompletedTime == nil, nil
 	}, time.Duration(110)*retryInterval, time.Second).Should(BeTrue())
-	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins instance is up and ready\n")
+	//	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins instance is up and ready\n")
 }
