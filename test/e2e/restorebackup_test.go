@@ -190,5 +190,5 @@ func resetJenkinsStatus(jenkins *v1alpha2.Jenkins) {
 
 	jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 	jenkins.Status = v1alpha2.JenkinsStatus{}
-	Expect(k8sClient.Update(context.TODO(), jenkins)).Should(Succeed())
+	Expect(k8sClient.Status().Update(context.TODO(), jenkins)).Should(Succeed())
 }

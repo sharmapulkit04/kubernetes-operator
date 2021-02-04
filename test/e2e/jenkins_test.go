@@ -228,6 +228,12 @@ func restartJenkinsMasterPod(jenkins *v1alpha2.Jenkins) {
 	_, _ = fmt.Fprintf(GinkgoWriter, "Restarting Jenkins master pod\n")
 	jenkinsPod := getJenkinsMasterPod(jenkins)
 	Expect(k8sClient.Delete(context.TODO(), jenkinsPod)).Should(Succeed())
+
+	Eventually(func() (bool, error) {
+		jenkinsPod = getJenkinsMasterPod(jenkins)
+		return jenkinsPod.DeletionTimestamp != nil, nil
+	}, 30*retryInterval, retryInterval).Should(BeTrue())
+
 	_, _ = fmt.Fprintf(GinkgoWriter, "Jenkins master pod has been restarted\n")
 }
 

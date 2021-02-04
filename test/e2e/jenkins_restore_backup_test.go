@@ -4,7 +4,6 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/api/v1alpha2"
 
 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
 	// +kubebuilder:scaffold:imports
 )
@@ -40,25 +39,21 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			waitForJobCreation(jenkinsClient, jobID)
 			verifyJobCanBeRun(jenkinsClient, jobID)
 
-			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
-			lastDoneBackup := jenkins.Status.LastBackup
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
 			waitForJenkinsUserConfigurationToComplete(jenkins)
-			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
-			Expect(jenkins.Status.RestoredBackup).To(BeNumerically("<=", lastDoneBackup))
 			jenkinsClient2, cleanUpFunc2 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
 			defer cleanUpFunc2()
 			waitForJobCreation(jenkinsClient2, jobID)
 			verifyJobBuildsAfterRestoreBackup(jenkinsClient2, jobID)
 
-			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
-			lastDoneBackup = jenkins.Status.LastBackup
 			resetJenkinsStatus(jenkins)
+			checkBaseConfigurationCompleteTimeIsNotSet(jenkins)
 			waitForJenkinsUserConfigurationToComplete(jenkins)
-			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
-
-			Expect(jenkins.Status.RestoredBackup).To(BeNumerically("<=", lastDoneBackup))
+			jenkinsClient3, cleanUpFunc3 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
+			defer cleanUpFunc3()
+			waitForJobCreation(jenkinsClient3, jobID)
+			verifyJobBuildsAfterRestoreBackup(jenkinsClient3, jobID)
 		})
 	})
 })
