@@ -13,6 +13,7 @@ import (
 	"github.com/jenkinsci/kubernetes-operator/pkg/configuration/user/seedjobs"
 	"github.com/jenkinsci/kubernetes-operator/pkg/constants"
 
+	"github.com/bndr/gojenkins"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
@@ -309,11 +310,20 @@ func verifyJobCanBeRun(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 }
 func verifyJobHasBeenRunCorrectly(jenkinsClient jenkinsclient.Jenkins, jobID string) {
 	By("retrieving finished job")
-	job, err := jenkinsClient.GetJob(jobID)
-	Expect(err).To(BeNil())
-	build, err := job.GetLastBuild()
-	Expect(err).To(BeNil())
 
-	By("evaluating correctness of the outcome")
-	Expect(build.IsGood()).To(BeTrue())
+	var (
+		err   error
+		job   *gojenkins.Job
+		build *gojenkins.Build
+	)
+
+	Eventually(func() (bool, error) {
+		job, err = jenkinsClient.GetJob(jobID)
+		Expect(err).To(BeNil())
+		build, err = job.GetLastBuild()
+		Expect(err).To(BeNil())
+
+		By("evaluating correctness of the outcome")
+		return build.IsGood(), err
+	}, time.Duration(110)*retryInterval, retryInterval).Should(BeTrue())
 }

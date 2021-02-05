@@ -6,7 +6,6 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -30,27 +29,13 @@ var _ = Describe("Jenkins controller", func() {
 				Configurations: []v1alpha2.ConfigMapRef{},
 			},
 		}
-		LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
-				HTTPGet: &corev1.HTTPGetAction{
-					Path:   "/login",
-					Port:   intstr.FromString("http"),
-					Scheme: corev1.URISchemeHTTP,
-				},
-			},
-			InitialDelaySeconds: int32(80),
-			TimeoutSeconds:      int32(4),
-			FailureThreshold:    int32(10),
-			SuccessThreshold:    int32(1),
-			PeriodSeconds:       int32(1),
-		}
 	)
 
 	BeforeEach(func() {
 		namespace = createNamespace()
 
 		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, LivenessProbe, priorityClassName)
+		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
 	})
 
 	AfterEach(func() {
@@ -92,27 +77,13 @@ var _ = Describe("Jenkins controller", func() {
 				Configurations: []v1alpha2.ConfigMapRef{},
 			},
 		}
-		LivenessProbe = &corev1.Probe{
-			Handler: corev1.Handler{
-				HTTPGet: &corev1.HTTPGetAction{
-					Path:   "/login",
-					Port:   intstr.FromString("http"),
-					Scheme: corev1.URISchemeHTTP,
-				},
-			},
-			InitialDelaySeconds: int32(100),
-			TimeoutSeconds:      int32(4),
-			FailureThreshold:    int32(12),
-			SuccessThreshold:    int32(1),
-			PeriodSeconds:       int32(5),
-		}
 	)
 
 	BeforeEach(func() {
 		namespace = createNamespace()
 
 		configureAuthorizationToUnSecure(namespace.Name, userConfigurationConfigMapName)
-		jenkins = createJenkinsCR(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, LivenessProbe, priorityClassName)
+		jenkins = createJenkinsCRSafeRestart(jenkinsCRName, namespace.Name, nil, groovyScripts, casc, priorityClassName)
 	})
 
 	AfterEach(func() {

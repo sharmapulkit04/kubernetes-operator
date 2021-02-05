@@ -39,6 +39,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			waitForJobCreation(jenkinsClient, jobID)
 			verifyJobCanBeRun(jenkinsClient, jobID)
 
+			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 			restartJenkinsMasterPod(jenkins)
 			waitForRecreateJenkinsMasterPod(jenkins)
 			waitForJenkinsUserConfigurationToComplete(jenkins)
@@ -48,6 +49,7 @@ var _ = Describe("Jenkins controller backup and restore", func() {
 			verifyJobBuildsAfterRestoreBackup(jenkinsClient2, jobID)
 
 			resetJenkinsStatus(jenkins)
+			jenkins = getJenkins(jenkins.Namespace, jenkins.Name)
 			checkBaseConfigurationCompleteTimeIsNotSet(jenkins)
 			waitForJenkinsUserConfigurationToComplete(jenkins)
 			jenkinsClient3, cleanUpFunc3 := verifyJenkinsAPIConnection(jenkins, namespace.Name)
