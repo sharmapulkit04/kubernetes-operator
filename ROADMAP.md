@@ -22,7 +22,7 @@ Now, we have a dedicated team which can bring more engineering effort to the pro
     - Introduce independent reconciliation controllers
     - Refactor e2e tests to support testing individual reconciliation controller
 - Improve contribution process and establish governance model [#496](https://github.com/jenkinsci/kubernetes-operator/issues/496)
-    - Improve CONTRIBUTING.md
+    - Improve [CONTRIBUTING.md](CONTRIBUTING.md)
     - Introduce architecture decision proposals process
     - Introduce governance model
 - Migrate Jenkins instance from Pod to Deployment [#497](https://github.com/jenkinsci/kubernetes-operator/issues/497)
