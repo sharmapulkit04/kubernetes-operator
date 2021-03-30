@@ -1,12 +1,9 @@
 /*
 Copyright 2021.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -92,6 +89,7 @@ func main() {
 	port := flag.Int("jenkins-api-port", 0, "The port on which Jenkins API is running. Note: If you want to use nodePort don't set this setting and --jenkins-api-use-nodeport must be true.")
 	useNodePort := flag.Bool("jenkins-api-use-nodeport", false, "Connect to Jenkins API using the service nodePort instead of service port. If you want to set this as true - don't set --jenkins-api-port.")
 	kubernetesClusterDomain := flag.String("cluster-domain", "cluster.local", "Use custom domain name instead of 'cluster.local'.")
+
 	opts := zap.Options{
 		Development: true,
 	}
@@ -147,6 +145,10 @@ func main() {
 
 	// validate jenkins API connection
 	jenkinsAPIConnectionSettings := client.JenkinsAPIConnectionSettings{Hostname: *hostname, Port: *port, UseNodePort: *useNodePort}
+	{
+		fmt.Println("Printing mah logs")
+		fmt.Println(jenkinsAPIConnectionSettings)
+	}
 	if err := jenkinsAPIConnectionSettings.Validate(); err != nil {
 		fatal(errors.Wrap(err, "invalid command line parameters"), *debug)
 	}
@@ -168,6 +170,10 @@ func main() {
 		fatal(errors.Wrap(err, "unable to create Jenkins controller"), *debug)
 	}
 
+	if err = (&v1alpha2.Jenkins{}).SetupWebhookWithManager(mgr); err != nil {
+		logger.Error(err, "unable to create webhook", "webhook", "Jenkins")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("health", healthz.Ping); err != nil {
