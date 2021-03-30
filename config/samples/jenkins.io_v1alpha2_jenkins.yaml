@@ -1,7 +1,7 @@
 apiVersion: jenkins.io/v1alpha2
 kind: Jenkins
 metadata:
-  name: example
+  name: example1
   namespace: default
 spec:
   configurationAsCode:
@@ -15,11 +15,24 @@ spec:
   jenkinsAPISettings:
     authorizationStrategy: createUser
   master:
+    plugins:
+    - name: simple-theme-plugin
+      version: "0.6"
+    - name: google-login
+      version: "1.6"
+    #- name: simple-theme-plugin
+    #  version: "0.5.1"  
+    - name: ssh-credentials
+      version: "1.18.2"
     disableCSRFProtection: false
     containers:
       - name: jenkins-master
         image: jenkins/jenkins:2.263.3-lts-alpine
         imagePullPolicy: Always
+        ports:
+          - name: http
+            hostPort: 8991
+            containerPort: 8080
         livenessProbe:
           failureThreshold: 12
           httpGet:
@@ -47,6 +60,7 @@ spec:
           requests:
             cpu: "1"
             memory: 500Mi
+         
   seedJobs:
   - id: jenkins-operator
     targets: "cicd/jobs/*.jenkins"

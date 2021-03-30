@@ -117,6 +117,7 @@ func (r *JenkinsReconciler) newJenkinsReconcilier(jenkins *v1alpha2.Jenkins) con
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.0/pkg/reconcile
 func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (ctrl.Result, error) {
+	fmt.Println("this called R")
 	reconcileFailLimit := uint64(10)
 	logger := logx.WithValues("cr", request.Name)
 	logger.V(log.VDebug).Info("Reconciling Jenkins")
@@ -187,6 +188,7 @@ func (r *JenkinsReconciler) Reconcile(_ context.Context, request ctrl.Request) (
 }
 
 func (r *JenkinsReconciler) reconcile(request reconcile.Request) (reconcile.Result, *v1alpha2.Jenkins, error) {
+	fmt.Println("r called")
 	logger := logx.WithValues("cr", request.Name)
 	// Fetch the Jenkins instance
 	jenkins := &v1alpha2.Jenkins{}

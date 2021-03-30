@@ -38,6 +38,7 @@ getArchiveFilename() {
 }
 
 download() {
+    echo "downloading this shit"
     local plugin originalPlugin version lock ignoreLockFile
     plugin="$1"
     version="${2:-latest}"
@@ -72,10 +73,15 @@ doDownload() {
     version="$2"
     jpi="$(getArchiveFilename "$plugin")"
 
+    echo "checking doDownload"
     # If plugin already exists and is the same version do not download
-    if test -f "$jpi" && unzip -p "$jpi" META-INF/MANIFEST.MF | tr -d '\r' | grep "^Plugin-Version: ${version}$" > /dev/null; then
+    if test -f "$jpi" ;then
+        local pVersion
+        pVersion=$(unzip -p "$jpi" META-INF/MANIFEST.MF | tr -d '\r' | grep "^Plugin-Version")
+        if [[ "$pVersion" > "$Version" ]];then
         echo "Using provided plugin: $plugin"
         return 0
+        fi
     fi
 
     if [[ "$version" == "latest" && -n "$JENKINS_UC_LATEST" ]]; then
@@ -166,6 +172,7 @@ jenkinsMajorMinorVersion() {
 }
 
 main() {
+    echo "this is being executed"
     local plugin pluginVersion jenkinsVersion
     local plugins=()
 
