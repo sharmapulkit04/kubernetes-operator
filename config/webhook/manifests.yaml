@@ -12,7 +12,7 @@ webhooks:
   clientConfig:
     service:
       name: webhook-service
-      namespace: system
+      namespace: default
       path: /validate-jenkins-io-jenkins-io-v1alpha2-jenkins
   failurePolicy: Fail
   name: vjenkins.kb.io

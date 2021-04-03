@@ -45,6 +45,9 @@ var _ webhook.Validator = &Jenkins{}
 func (r *Jenkins) ValidateCreate() error {
 	jenkinslog.Info("validate create", "name", r.Name)
 	fmt.Print("this called")
+	var temp string
+	fmt.Scan(&temp)
+	fmt.Print("succeded")
 
 	// TODO(user): fill in your validation logic upon object creation.
 	return nil
@@ -53,6 +56,11 @@ func (r *Jenkins) ValidateCreate() error {
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
 func (r *Jenkins) ValidateUpdate(old runtime.Object) error {
 	jenkinslog.Info("validate update", "name", r.Name)
+	jenkinslog.Info("validate create", "name", r.Name)
+	fmt.Print("this called")
+	var temp string
+	fmt.Scan(&temp)
+	fmt.Print("succeded")
 
 	// TODO(user): fill in your validation logic upon object update.
 	return nil
