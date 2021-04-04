@@ -168,4 +168,59 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /tmp/k8s-webhook-server/serving-certs
+          name: cert
+          readOnly: true
       terminationGracePeriodSeconds: 10
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-operator-webhook-service
+  namespace: default
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    control-plane: controller-manager
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: jenkins-operator-validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: jenkins-operator-webhook-service
+      namespace: default
+      path: /validate-jenkins-io-jenkins-io-v1alpha2-jenkins
+  failurePolicy: Fail
+  name: vjenkins.kb.io
+  rules:
+  - apiGroups:
+    - jenkins.io.jenkins.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jenkins
+  sideEffects: None
+          
+
