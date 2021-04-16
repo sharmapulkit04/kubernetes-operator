@@ -150,7 +150,7 @@ spec:
       serviceAccountName: jenkins-operator
       containers:
         - name: jenkins-operator
-          image: virtuslab/jenkins-operator:v0.5.0
+          image: anarchist04/jenkins-operator:v0.6
           command:
           - jenkins-operator
           args: []
@@ -166,3 +166,44 @@ spec:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
               value: "jenkins-operator"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-service
+  namespace: default
+spec:
+  ports:
+  - port: 443
+    targetPort: 9443
+  selector:
+    control-plane: controller-manager
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  creationTimestamp: null
+  name: validating-webhook-configuration
+webhooks:
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: webhook-service
+      namespace: default
+      path: /validate-jenkins-io-jenkins-io-v1alpha2-jenkins
+  failurePolicy: Fail
+  name: vjenkins.kb.io
+  rules:
+  - apiGroups:
+    - jenkins.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - jenkins
+  sideEffects: None
+
