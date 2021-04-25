@@ -170,6 +170,13 @@ func main() {
 		fatal(errors.Wrap(err, "unable to create Jenkins controller"), *debug)
 	}
 
+	folderInfo, err := os.Stat("/tmp/k8s-webhook-server/serving-certs/")
+	if os.IsNotExist(err) {
+		fmt.Println("directory does not exist.")
+	}
+	fmt.Println("this folder exist")
+	fmt.Println(folderInfo)
+
 	if err = (&v1alpha2.Jenkins{}).SetupWebhookWithManager(mgr); err != nil {
 		logger.Error(err, "unable to create webhook", "webhook", "Jenkins")
 		os.Exit(1)
