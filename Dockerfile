@@ -13,6 +13,8 @@ COPY go.sum go.sum
 RUN go mod download
 
 # Copy the go source
+RUN mkdir -p /tmp/k8s-webhook-server/serving-certs
+COPY certs/ /tmp/k8s-webhook-server/serving-certs/
 COPY api/ api/
 COPY controllers/ controllers/
 COPY internal/ internal/
